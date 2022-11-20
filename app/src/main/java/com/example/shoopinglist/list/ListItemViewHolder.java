@@ -16,11 +16,13 @@ public class ListItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView itemValueView;
     private final TextView itemAmountView;
     private final ImageView itemImageView;
+    private final View itemView;
 
     private boolean isChecked = false;
 
     public ListItemViewHolder(@NonNull View itemView) {
         super(itemView);
+        this.itemView = itemView;
         itemNameView = (TextView) itemView.findViewById(R.id.common_item_text);
         itemAmountView = (TextView) itemView.findViewById(R.id.common_item_amount);
         itemValueView = (TextView) itemView.findViewById(R.id.common_item_value);
@@ -32,7 +34,6 @@ public class ListItemViewHolder extends RecyclerView.ViewHolder {
         imageView.setOnClickListener((it) -> {
             switchBackgroundImage();
         });
-
     }
 
     private void switchBackgroundImage() {
@@ -44,7 +45,7 @@ public class ListItemViewHolder extends RecyclerView.ViewHolder {
         }
         isChecked = !isChecked;
     }
-    
+
     public TextView getItemNameView() {
         return itemNameView;
     }
@@ -56,6 +57,9 @@ public class ListItemViewHolder extends RecyclerView.ViewHolder {
     public TextView getItemAmountView() {
         return itemAmountView;
     }
-}
 
+    public View getItemView() {
+        return itemView;
+    }
+}
 

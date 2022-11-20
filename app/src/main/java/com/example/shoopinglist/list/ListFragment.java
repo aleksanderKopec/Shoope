@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +26,21 @@ public class ListFragment extends Fragment {
     private RecyclerView.LayoutManager listLayoutManager;
     private ListItemAdapter listAdapter;
 
+    public ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.DOWN | ItemTouchHelper.UP) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            Toast.makeText(ListFragment.this.getContext(), "on Move", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            Toast.makeText(ListFragment.this.getContext(), "on Swiped ", Toast.LENGTH_SHORT).show();
+            //Remove swiped item from list and notify the RecyclerView
+            int position = viewHolder.getAdapterPosition();
+            listAdapter.popItem(position);
+        }
+    };
 
     @Override
     public View onCreateView(
@@ -42,8 +59,8 @@ public class ListFragment extends Fragment {
         listAdapter = new ListItemAdapter();
         createSampleDataset(listAdapter, 20);
         listRecyclerView.setAdapter(listAdapter);
-
-
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(listRecyclerView);
         return rootView;
     }
 
@@ -65,5 +82,6 @@ public class ListFragment extends Fragment {
             adapter.addItem(new ListItem("This is item #" + i));
         }
     }
+
 
 }
