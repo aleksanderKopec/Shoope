@@ -20,6 +20,14 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
     public ListItemAdapter() {
     }
 
+    public ListItem getItem(int position) {
+        return listItems.get(position);
+    }
+
+    public List<ListItem> getItemList() {
+        return this.listItems;
+    }
+
     public void addItem(int position, ListItem item) {
         listItems.add(position, item);
         this.notifyItemInserted(position);
@@ -49,7 +57,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ListItemViewHolder holder, int position) {
         holder.getItemNameView().setText(listItems.get(position).getText());
-        holder.getItemAmountView().setText(String.valueOf(listItems.get(position).getAmount()));
+        holder.getItemAmountView().setText(listItems.get(position).getAmount() + "x");
         holder.getItemValueView().setText(String.valueOf(listItems.get(position).getValue()));
         holder.setImageOnClickListener();
     }

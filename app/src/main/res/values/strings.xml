@@ -15,4 +15,10 @@
     <string name="_15_5">15.5</string>
     <string name="checkmark">✓</string>
     <string name="item_list_checkmark">Item list checkmark</string>
+    <string name="LoginButtonText">Login</string>
+    <string name="new_item_name">Name</string>
+    <string name="new_item_amount">Amount</string>
+    <string name="new_item_value">Value</string>
+    <string name="popup_button_add">Add</string>
+    <string name="popup_button_cancel">cancel</string>
 </resources>
