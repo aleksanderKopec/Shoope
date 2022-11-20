@@ -29,7 +29,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
-        app:srcCompat="@android:drawable/ic_dialog_email"
+        app:srcCompat="@android:drawable/btn_plus"
         android:contentDescription="@string/idk" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
