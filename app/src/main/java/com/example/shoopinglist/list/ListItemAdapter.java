@@ -48,7 +48,10 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ListItemViewHolder holder, int position) {
-        holder.getTextView().setText(listItems.get(position).getText());
+        holder.getItemNameView().setText(listItems.get(position).getText());
+        holder.getItemAmountView().setText(String.valueOf(listItems.get(position).getAmount()));
+        holder.getItemValueView().setText(String.valueOf(listItems.get(position).getValue()));
+        holder.setImageOnClickListener();
     }
 
     @Override

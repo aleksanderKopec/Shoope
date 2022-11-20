@@ -14,4 +14,5 @@
     <string name="_10">10</string>
     <string name="_15_5">15.5</string>
     <string name="checkmark">✓</string>
+    <string name="item_list_checkmark">Item list checkmark</string>
 </resources>
