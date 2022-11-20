@@ -11,4 +11,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="common_item">This is a common item</string>
     <string name="idk">IDK</string>
+    <string name="_10">10</string>
+    <string name="_15_5">15.5</string>
+    <string name="checkmark">✓</string>
 </resources>
