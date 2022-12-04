@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1012285504375",
+    "firebase_url": "https://shoopingcart-ac2a7-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "shoopingcart-ac2a7",
+    "storage_bucket": "shoopingcart-ac2a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012285504375:android:65b53e34ff1ce34aba7f72",
+        "android_client_info": {
+          "package_name": "com.example.shoopinglist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012285504375-bdub97dttbb3hfa3nao0raos7h3c0tb6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbFQ_J1N5NoaT5viagy2g7KBhdksPtqjw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012285504375-bdub97dttbb3hfa3nao0raos7h3c0tb6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
