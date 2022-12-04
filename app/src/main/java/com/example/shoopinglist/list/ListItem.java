@@ -29,6 +29,9 @@ public class ListItem implements Parcelable {
         this.value = value;
     }
 
+    public ListItem() {
+    }
+
     public ListItem(String text, int amount, double value) {
         this.text = text;
         this.amount = amount;

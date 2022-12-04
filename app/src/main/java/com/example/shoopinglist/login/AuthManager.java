@@ -1,6 +1,8 @@
 package com.example.shoopinglist.login;
 
+import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 
@@ -18,8 +20,6 @@ public class AuthManager {
 
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    private FirebaseUser user;
-
     private AuthManager(ActivityResultLauncher<Intent> signInLauncher) {
         this.signInLauncher = signInLauncher;
     }
@@ -30,13 +30,13 @@ public class AuthManager {
     }
 
     public static AuthManager getInstance() {
-        if (INSTANCE == null){
+        if (INSTANCE == null) {
             throw new RuntimeException("AuthManager has not been instantiated yet.");
         }
         return INSTANCE;
     }
 
-    public void startLoginActivity(){
+    public void startLoginActivity() {
         List<AuthUI.IdpConfig> providers = List.of(
                 new AuthUI.IdpConfig.EmailBuilder().build()
         );
@@ -49,14 +49,11 @@ public class AuthManager {
     }
 
     public FirebaseUser getUser() {
-        return user;
+        return mAuth.getCurrentUser();
     }
 
-    public void setUser(FirebaseUser user) {
-        this.user = user;
-    }
-
-    public void refreshUser(){
-        this.user = mAuth.getCurrentUser();
+    public void logout(Context context) {
+        mAuth.signOut();
+        Toast.makeText(context, "Succesfully logged out", Toast.LENGTH_SHORT).show();
     }
 }

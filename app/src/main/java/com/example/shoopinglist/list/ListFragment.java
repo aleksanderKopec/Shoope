@@ -2,7 +2,6 @@ package com.example.shoopinglist.list;
 
 import static android.app.Activity.RESULT_OK;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,10 +10,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,8 +47,7 @@ public class ListFragment extends Fragment {
 
         listRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        listAdapter = new ListItemAdapter();
-        createSampleDataset(listAdapter, 5);
+        listAdapter = new ListItemAdapter(authManager);
         listRecyclerView.setAdapter(listAdapter);
         enableSwipeToDeleteAndUndo();
         enableAddingListItems();
@@ -61,8 +57,25 @@ public class ListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonAddList.setOnClickListener(view1 -> authManager.startLoginActivity());
-        binding.buttonAddList.setText(R.string.LoginButtonText);
+        binding.buttonLogin.setOnClickListener(view1 -> {
+            if (authManager.getUser() == null) {
+                authManager.startLoginActivity();
+                listAdapter.reloadDatabase();
+            } else {
+                Toast.makeText(getContext(), "You are already logged in!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.buttonLogin.setText(R.string.LoginButtonText);
+
+        binding.buttonLogout.setOnClickListener(view1 -> {
+            if (authManager.getUser() != null) {
+                authManager.logout(getContext());
+                listAdapter.reloadDatabase();
+            } else {
+                Toast.makeText(getContext(), "You are not logged in!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.buttonLogout.setText(R.string.LogoutButtonText);
     }
 
     @Override
@@ -111,7 +124,7 @@ public class ListFragment extends Fragment {
         IdpResponse response = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
-            authManager.refreshUser();
+            listAdapter.reloadDatabase();
             Toast.makeText(this.getContext(), "Successfully logged in", Toast.LENGTH_SHORT).show();
             // ...
         } else {
@@ -122,5 +135,6 @@ public class ListFragment extends Fragment {
             Toast.makeText(this.getContext(), "Failed to log in", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 }
