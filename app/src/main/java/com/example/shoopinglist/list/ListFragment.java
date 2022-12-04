@@ -1,12 +1,17 @@
 package com.example.shoopinglist.list;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
@@ -17,13 +22,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.shoopinglist.R;
 import com.example.shoopinglist.common.SwipeToDeleteCallback;
 import com.example.shoopinglist.databinding.FragmentListBinding;
+import com.example.shoopinglist.login.AuthManager;
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 
 public class ListFragment extends Fragment {
 
     private FragmentListBinding binding;
     private RecyclerView listRecyclerView;
-    private RecyclerView.LayoutManager listLayoutManager;
     private ListItemAdapter listAdapter;
+    private final AuthManager authManager = AuthManager.createInstance(registerForActivityResult(
+            new FirebaseAuthUIActivityResultContract(),
+            this::onSignInResult
+    ));
 
     @Override
     public View onCreateView(
@@ -36,8 +48,7 @@ public class ListFragment extends Fragment {
 
         listRecyclerView = rootView.findViewById(R.id.list_recycler_view);
 
-        listLayoutManager = new LinearLayoutManager(getActivity());
-        listRecyclerView.setLayoutManager(listLayoutManager);
+        listRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         listAdapter = new ListItemAdapter();
         createSampleDataset(listAdapter, 5);
@@ -50,8 +61,7 @@ public class ListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonAddList.setOnClickListener(view1 -> NavHostFragment.findNavController(ListFragment.this)
-                .navigate(R.id.action_FirstFragment_to_SecondFragment));
+        binding.buttonAddList.setOnClickListener(view1 -> authManager.startLoginActivity());
         binding.buttonAddList.setText(R.string.LoginButtonText);
     }
 
@@ -95,6 +105,22 @@ public class ListFragment extends Fragment {
             dialogBuilder.setCancelable(true);
             dialogBuilder.show();
         }));
+    }
+
+    private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
+        IdpResponse response = result.getIdpResponse();
+        if (result.getResultCode() == RESULT_OK) {
+            // Successfully signed in
+            authManager.refreshUser();
+            Toast.makeText(this.getContext(), "Successfully logged in", Toast.LENGTH_SHORT).show();
+            // ...
+        } else {
+            // Sign in failed. If response is null the user canceled the
+            // sign-in flow using the back button. Otherwise check
+            // response.getError().getErrorCode() and handle the error.
+            // ...
+            Toast.makeText(this.getContext(), "Failed to log in", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
