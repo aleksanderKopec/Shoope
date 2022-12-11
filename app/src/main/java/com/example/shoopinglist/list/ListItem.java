@@ -21,12 +21,14 @@ public class ListItem implements Parcelable {
     private int id;
     private int amount;
     private double value;
+    private boolean checked;
 
-    public ListItem(String text, int id, int amount, double value) {
+    public ListItem(String text, int id, int amount, double value, boolean checked) {
         this.text = text;
         this.id = id;
         this.amount = amount;
         this.value = value;
+        this.checked = checked;
     }
 
     public ListItem() {
@@ -36,6 +38,7 @@ public class ListItem implements Parcelable {
         this.text = text;
         this.amount = amount;
         this.value = value;
+        this.checked = false;
     }
 
     protected ListItem(Parcel in) {
@@ -47,6 +50,14 @@ public class ListItem implements Parcelable {
 
     static int getLayout() {
         return R.layout.common_item;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 
     public String getText() {

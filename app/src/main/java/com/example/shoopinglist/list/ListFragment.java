@@ -46,9 +46,6 @@ public class ListFragment extends Fragment {
         listRecyclerView = rootView.findViewById(R.id.list_recycler_view);
 
         listRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        listAdapter = new ListItemAdapter(authManager);
-        listRecyclerView.setAdapter(listAdapter);
         enableSwipeToDeleteAndUndo();
         enableAddingListItems();
         return rootView;
@@ -56,6 +53,8 @@ public class ListFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        listAdapter = new ListItemAdapter(authManager, getLayoutInflater(), requireView(), requireActivity());
+        listRecyclerView.setAdapter(listAdapter);
 
         binding.buttonLogin.setOnClickListener(view1 -> {
             if (authManager.getUser() == null) {
