@@ -4,6 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,22 +19,30 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shoopinglist.R;
 import com.example.shoopinglist.database.DatabaseManager;
 import com.example.shoopinglist.login.AuthManager;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
+    public static int REQUEST_IMAGE_CAPTURE = 0;
     private final AuthManager authManager;
     private final LayoutInflater layoutInflater;
     private final View fragmentView;
     private final Activity activity;
     private List<ListItem> listItems = new ArrayList<>();
     private DatabaseManager databaseManager;
+    private String currentPhotoPath;
 
 
     public ListItemAdapter(AuthManager authManager, LayoutInflater layoutInflater, View fragmentView, Activity activity) {
@@ -51,10 +65,32 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
             EditText dialogNameView = dialogView.findViewById(R.id.popup_item_name);
             EditText dialogAmountView = dialogView.findViewById(R.id.popup_item_amount);
             EditText dialogValueView = dialogView.findViewById(R.id.popup_item_value);
+            ImageView dialogImageView = dialogView.findViewById(R.id.popup_item_image);
+
+            if (item.getPhotoFilePath() != null) {
+                File imgFile = new File(item.getPhotoFilePath());
+                if (imgFile.exists()) {
+                    Bitmap imageBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    dialogImageView.setImageBitmap(imageBitmap);
+                } else {
+                    // TODO: load file from firebase
+                }
+            } else {
+                dialogImageView.setVisibility(View.GONE);
+            }
 
             dialogNameView.setText(item.getText());
             dialogAmountView.setText(String.valueOf(item.getAmount()));
             dialogValueView.setText(String.valueOf(item.getValue()));
+
+            dialogBuilder.setNeutralButton("Take photo", ((dialogInterface, i) -> {
+                dispatchTakePictureIntent();
+                if (currentPhotoPath != null) {
+                    item.setPhotoFilePath(currentPhotoPath);
+                    editItem(position, item);
+                }
+                currentPhotoPath = null;
+            }));
 
             dialogBuilder.setPositiveButton("Save", (dialogInterface, i) -> {
                 String popupItemName = dialogNameView.getText().toString();
@@ -161,6 +197,44 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         } else {
             itemImageView.setBackground(AppCompatResources.getDrawable(context, R.drawable.checkmark));
         }
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(fragmentView.getContext(),
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override

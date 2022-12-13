@@ -22,4 +22,5 @@
     <string name="popup_button_add">Add</string>
     <string name="popup_button_cancel">cancel</string>
     <string name="LogoutButtonText">Logout</string>
+    <string name="item_image">Item Image</string>
 </resources>

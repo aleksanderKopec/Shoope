@@ -22,13 +22,15 @@ public class ListItem implements Parcelable {
     private int amount;
     private double value;
     private boolean checked;
+    private String photoFilePath;
 
-    public ListItem(String text, int id, int amount, double value, boolean checked) {
+    public ListItem(String text, int id, int amount, double value, boolean checked, String photoFilePath) {
         this.text = text;
         this.id = id;
         this.amount = amount;
         this.value = value;
         this.checked = checked;
+        this.photoFilePath = photoFilePath;
     }
 
     public ListItem() {
@@ -39,6 +41,7 @@ public class ListItem implements Parcelable {
         this.amount = amount;
         this.value = value;
         this.checked = false;
+        this.photoFilePath = null;
     }
 
     protected ListItem(Parcel in) {
@@ -110,5 +113,13 @@ public class ListItem implements Parcelable {
         this.id = source.readInt();
         this.amount = source.readInt();
         this.value = source.readDouble();
+    }
+
+    public String getPhotoFilePath() {
+        return photoFilePath;
+    }
+
+    public void setPhotoFilePath(String photoFilePath) {
+        this.photoFilePath = photoFilePath;
     }
 }
