@@ -25,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.shoopinglist.R;
 import com.example.shoopinglist.database.DatabaseManager;
 import com.example.shoopinglist.login.AuthManager;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,13 +37,17 @@ import java.util.List;
 import java.util.Locale;
 
 public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
+
+    public static String fileUri;
+
     public static int REQUEST_IMAGE_CAPTURE = 0;
     private final AuthManager authManager;
     private final LayoutInflater layoutInflater;
     private final View fragmentView;
     private final Activity activity;
+    public DatabaseManager databaseManager;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
     private List<ListItem> listItems = new ArrayList<>();
-    private DatabaseManager databaseManager;
     private String currentPhotoPath;
 
 
@@ -56,6 +62,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
     private void enableEditingItem(View itemView, int position) {
         itemView.setOnClickListener((view -> {
             ListItem item = listItems.get(position);
+
             View dialogView = layoutInflater.inflate(R.layout.popup_layout, (ViewGroup) fragmentView, false);
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
 
@@ -73,7 +80,16 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
                     Bitmap imageBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                     dialogImageView.setImageBitmap(imageBitmap);
                 } else {
-                    // TODO: load file from firebase
+                    FileDownloadTask task = storage.getReference().child(imgFile.getName()).getFile(Uri.fromFile(imgFile));
+                    task.addOnSuccessListener(taskSnapshot -> {
+                        Bitmap imageBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                        dialogImageView.setImageBitmap(imageBitmap);
+                    });
+
+                    task.addOnFailureListener(taskSnaphot -> {
+                        Log.d("ERROR", "Error uploading image");
+                        Log.d("ERROR", taskSnaphot.getMessage());
+                    });
                 }
             } else {
                 dialogImageView.setVisibility(View.GONE);
@@ -181,7 +197,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         holder.getItemAmountView().setText(listItem.getAmount() + "x");
         holder.getItemValueView().setText(String.valueOf(listItem.getValue()));
 
-        ImageView itemImageView = (ImageView) holder.getItemView().findViewById(R.id.checkmark_image_view);
+        ImageView itemImageView = holder.getItemView().findViewById(R.id.checkmark_image_view);
         itemImageView.setOnClickListener((it) -> {
             listItem.setChecked(!listItem.isChecked());
             editItem(position, listItem);
@@ -216,6 +232,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
                         "com.example.android.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                fileUri = photoURI.toString();
                 activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
         }

@@ -3,13 +3,15 @@ package com.example.shoopinglist.list;
 import static android.app.Activity.RESULT_OK;
 
 import android.app.AlertDialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shoopinglist.R;
 import com.example.shoopinglist.common.SwipeToDeleteCallback;
+import com.example.shoopinglist.database.DatabaseManager;
 import com.example.shoopinglist.databinding.FragmentListBinding;
 import com.example.shoopinglist.login.AuthManager;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
@@ -77,6 +80,49 @@ public class ListFragment extends Fragment {
             }
         });
         binding.buttonLogout.setText(R.string.LogoutButtonText);
+
+        binding.buttonShare.setText(R.string.Share);
+        enableSharingList(binding.buttonShare);
+    }
+
+    private void enableSharingList(View shareButtonView) {
+        shareButtonView.setOnClickListener((view -> {
+
+            if (authManager.getUser() == null) {
+                Toast.makeText(getContext(), "You are not logged in!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            View dialogView = getLayoutInflater().inflate(R.layout.share_popup_layout, (ViewGroup) requireView(), false);
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(requireContext());
+
+            dialogBuilder.setView(dialogView);
+            dialogBuilder.setTitle("Share list");
+
+            TextView popupIdSelf = dialogView.findViewById(R.id.popup_id_self);
+            EditText popupIdOther = dialogView.findViewById(R.id.popup_id_other);
+
+            popupIdSelf.setText(authManager.getUser().getUid());
+
+            dialogBuilder.setNeutralButton("Copy ID", ((dialogInterface, i) -> {
+                ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("userId", authManager.getUser().getUid());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getContext(), "Id copied to clipboard", Toast.LENGTH_SHORT).show();
+            }));
+
+            dialogBuilder.setPositiveButton("Connect", (dialogInterface, i) -> {
+                String id = popupIdOther.getText().toString();
+                if (id.isBlank()) {
+                    Toast.makeText(getContext(), "Id cannot be empty", Toast.LENGTH_SHORT).show();
+                } else {
+                    listAdapter.databaseManager = new DatabaseManager(id);
+                    listAdapter.databaseManager.addDataChangeListener(listAdapter);
+                }
+            });
+            dialogBuilder.setCancelable(true);
+            dialogBuilder.show();
+        }));
     }
 
     @Override
@@ -119,14 +165,6 @@ public class ListFragment extends Fragment {
             dialogBuilder.setCancelable(true);
             dialogBuilder.show();
         }));
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ListItemAdapter.REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-        }
     }
 
 

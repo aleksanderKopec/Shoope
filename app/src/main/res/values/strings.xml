@@ -23,4 +23,6 @@
     <string name="popup_button_cancel">cancel</string>
     <string name="LogoutButtonText">Logout</string>
     <string name="item_image">Item Image</string>
+    <string name="id">ID</string>
+    <string name="Share">Share</string>
 </resources>
