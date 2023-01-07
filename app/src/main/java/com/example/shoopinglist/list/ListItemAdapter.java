@@ -36,6 +36,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Odpowiada za większość funkcjonalności związanych z listą elementów.
+ */
 public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
 
     public static String fileUri;
@@ -50,7 +53,9 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
     private List<ListItem> listItems = new ArrayList<>();
     private String currentPhotoPath;
 
-
+    /**
+     * Oprócz standardowej konstrukcji obiektu wywoluje także odświeżenie wartości w bazie danych.
+     */
     public ListItemAdapter(AuthManager authManager, LayoutInflater layoutInflater, View fragmentView, Activity activity) {
         this.authManager = authManager;
         this.layoutInflater = layoutInflater;
@@ -59,6 +64,12 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         reloadDatabase();
     }
 
+    /**
+     * Uruchamia mechanizmy konieczne do edytowania elementów znajdująych się na liście.
+     *
+     * @param itemView Widok wyświetlanego elementu
+     * @param position Pozycja elementu na liście.
+     */
     private void enableEditingItem(View itemView, int position) {
         itemView.setOnClickListener((view -> {
             ListItem item = listItems.get(position);
@@ -120,6 +131,10 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         }));
     }
 
+
+    /**
+     * Odświeża połączenie z bazą danych zależnie od stanu autentykacji uzytkownika.
+     */
     public void reloadDatabase() {
         Log.d("RELOAD_DATABASE", "reloading database");
         if (authManager.getUser() != null) {
@@ -189,6 +204,12 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         return new ListItemViewHolder(view);
     }
 
+    /**
+     * Wykonuje operacje potrzebne do zapewnienia interaktywności elementów listy.
+     *
+     * @param holder   Pojemnik na widok elementu listy
+     * @param position Pozycja elementu listy
+     */
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ListItemViewHolder holder, int position) {
@@ -206,6 +227,12 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         setItemCheckedImage(itemImageView, listItem);
     }
 
+    /**
+     * Ustawia wyświetlany obrazek zależnie od stanu elementu
+     *
+     * @param itemImageView Widok elementu
+     * @param item          item którego stan został zmieniony
+     */
     private void setItemCheckedImage(ImageView itemImageView, ListItem item) {
         Context context = itemImageView.getContext();
         if (item.isChecked()) {
@@ -215,6 +242,9 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         }
     }
 
+    /**
+     * Uruchamia element odpowiadający za robienie zdjęć elementów listy oraz tworzenie pliku dla tych zdjęć.
+     */
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -238,6 +268,12 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         }
     }
 
+    /**
+     * Tworzy plik dla zdjęcia. Plik musi być utworzony przed faktycznym stworzeniem zdjęcia.
+     *
+     * @return zwraca obiekt odpowiadający utworzonemu plikowi
+     * @throws IOException jeśli nie udało się utworzyć pliku
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
