@@ -15,7 +15,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
+/**
+ * DatabaseManager odpowiada za połączeniez z bazą danych
+ */
 public class DatabaseManager {
+
 
     private static final String LOG_TAG = "DatabaseManager";
 
@@ -26,6 +30,7 @@ public class DatabaseManager {
     private final DatabaseReference userReference;
     private final DatabaseReference listReference;
 
+
     public DatabaseManager(String userId) {
         this.userReference = database.getReference(userId);
         this.listReference = userReference.child(LIST_KEY);
@@ -35,6 +40,11 @@ public class DatabaseManager {
         listReference.setValue(list);
     }
 
+    /**
+     * Słuzy do wykonywania akcji lokalnie w momemncie wykrycia zmiany na Firebase i
+     * schynchronizowania jej lokalnie
+     * @param adapter odpowiadający za posiadanie listy
+     */
     public void addDataChangeListener(ListItemAdapter adapter) {
         listReference.addValueEventListener(new ValueEventListener() {
             @Override

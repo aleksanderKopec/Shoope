@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import com.example.shoopinglist.R;
 
+/**
+ * Przechowuje informacje o danym elemecie z listy oraz parcelizacje element.
+ */
 public class ListItem implements Parcelable {
     public static final Creator<ListItem> CREATOR = new Creator<ListItem>() {
         @Override
