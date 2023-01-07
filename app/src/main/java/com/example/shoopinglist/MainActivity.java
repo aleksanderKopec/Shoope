@@ -12,9 +12,20 @@ import com.example.shoopinglist.list.ListItemAdapter;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 
+/**
+ * Punk wejsćiowy aplikacji - odpowiada za tworzenie głównego widoku i jest 'rodzicem' wszystkich
+ * innych widoków.
+ */
 public class MainActivity extends AppCompatActivity {
 
 
+    /**
+     * Punkt wejściowy dla każdej instacji MainActivity. W naszym przypadku jedynie tworzy
+     * podstawowy widok.
+     *
+     * @param savedInstanceState Zawiera dane przesłane z poprzedniej instacji MainActivity lub 'null'
+     *                           jeśli żadne nie zostały przesłane.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +36,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
     }
 
+    /**
+     * Obsługuje dane zwrócone przez zewnętrzne Activity. W naszym przypadku służy wyłącznie do
+     * obłużenia stworzonego zdjęcia - znajduje plik w którym zapisane jest zdjęcie i wysyła
+     * je do firebase database.
+     *
+     * @param requestCode Używany do ustalenia źródła które wywołało reakcje. W naszym przypadku to zawsze
+     *                    wartość 0 (pod nazwą REQUEST_IMAGE_CAPTURE).
+     * @param resultCode  Używany do rozpoznania stanu zwróconej reakcji (powodzenie/przerwanie/niepowodzenie).
+     * @param data        Zawiera w sobie dodatkowe dane przesłane przez zakończone Activity. W naszym przypadku zawsze 'null'.
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

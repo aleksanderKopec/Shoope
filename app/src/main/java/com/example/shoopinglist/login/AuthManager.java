@@ -12,6 +12,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
+/**
+ * Odpowiada za obsługe autentykacji i autoryzacji użytkowników.
+ */
 public class AuthManager {
 
     private static AuthManager INSTANCE;
@@ -24,11 +27,23 @@ public class AuthManager {
         this.signInLauncher = signInLauncher;
     }
 
+    /**
+     * Tworzy statyczną instancje AuthManager'a. Co do zasady powinna być wywoływana raz w ciągu
+     * działania programu, ale w niektórych okolicznościach może być potrzebne jej odświeżenie.
+     *
+     * @param signInLauncher Launcher używany do uruchomienia Activity logowania użytkownika.
+     * @return Nowo utworzona instancja klasy AuthManager.
+     */
     public static AuthManager createInstance(ActivityResultLauncher<Intent> signInLauncher) {
         INSTANCE = new AuthManager(signInLauncher);
         return INSTANCE;
     }
 
+    /**
+     * Zwraca wcześniej utworzoną instancje.
+     *
+     * @return Instancja klasy AuthManager.
+     */
     public static AuthManager getInstance() {
         if (INSTANCE == null) {
             throw new RuntimeException("AuthManager has not been instantiated yet.");
@@ -36,6 +51,9 @@ public class AuthManager {
         return INSTANCE;
     }
 
+    /**
+     * Uruchamia Activity odpowiedzialne za logowanie/rejestracje użytkownika
+     */
     public void startLoginActivity() {
         List<AuthUI.IdpConfig> providers = List.of(
                 new AuthUI.IdpConfig.EmailBuilder().build()
@@ -52,6 +70,11 @@ public class AuthManager {
         return mAuth.getCurrentUser();
     }
 
+    /**
+     * Wylogowuje użytkownika
+     *
+     * @param context Kontekst w którym powinna być wyświetlona informacja o wylogowaniu.
+     */
     public void logout(Context context) {
         mAuth.signOut();
         Toast.makeText(context, "Succesfully logged out", Toast.LENGTH_SHORT).show();

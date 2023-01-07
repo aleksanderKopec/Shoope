@@ -17,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shoopinglist.R;
 
+/**
+ * Odpowiada za płynna animacje usuwania elementów z listy
+ */
 abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 
     private final Paint mClearPaint;

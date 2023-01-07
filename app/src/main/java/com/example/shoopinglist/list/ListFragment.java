@@ -29,6 +29,9 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 
+/**
+ * Klasa odpowiada za wyświetlanie głownego widoku listy elementów
+ */
 public class ListFragment extends Fragment {
 
     private FragmentListBinding binding;
@@ -56,6 +59,10 @@ public class ListFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Funkcja odpowiadająca za zapewnienie interakcji przycisków logowania i wylogowywania
+     *
+     */
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         listAdapter = new ListItemAdapter(authManager, getLayoutInflater(), requireView(), requireActivity());
@@ -85,6 +92,10 @@ public class ListFragment extends Fragment {
         enableSharingList(binding.buttonShare);
     }
 
+    /**
+     * Wprowadza funkcjonalność list udostępniania list pomiędzy innymi użytkownikami
+     * @param shareButtonView Przycisk odpowiadający za wyświetlanie okna udostępniania list
+     */
     private void enableSharingList(View shareButtonView) {
         shareButtonView.setOnClickListener((view -> {
 
@@ -137,6 +148,9 @@ public class ListFragment extends Fragment {
         }
     }
 
+    /**
+     * Uruchamia funkcjonalność usuwania elementów poprzez przeciągnięcie w prawo lub lewo.
+     */
     private void enableSwipeToDeleteAndUndo() {
         SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this.getContext()) {
             @Override
@@ -149,6 +163,9 @@ public class ListFragment extends Fragment {
         itemTouchhelper.attachToRecyclerView(listRecyclerView);
     }
 
+    /**
+     * Uruchamia funkcjonalność dodawania elementów do listy
+     */
     private void enableAddingListItems() {
         binding.fab.setOnClickListener((view -> {
             View dialogView = this.getLayoutInflater().inflate(R.layout.popup_layout, (ViewGroup) requireView(), false);
@@ -167,6 +184,10 @@ public class ListFragment extends Fragment {
         }));
     }
 
+    /**
+     * Obsługuje wynik do logowania do bazy danych Firebase
+     * @param result przechowuje o powodzeniu logowania
+     */
 
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         IdpResponse response = result.getIdpResponse();
