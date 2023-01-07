@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shoopinglist.R;
 
+/**
+ * Pojemnik odpowiadający za widok poszczególnych elementów z listy.
+ */
 public class ListItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView itemNameView;
     private final TextView itemValueView;
